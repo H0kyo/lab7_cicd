@@ -53,8 +53,6 @@ jobs:
       # Use the downloaded Databricks CLI.
       - uses: databricks/setup-cli@main
 
-      # Run the Databricks workflow named "sample_job" as defined in the
-      # bundle that was just deployed.
       - run: databricks bundle run lab7_cicd_etl --refresh-all
         working-directory: .
         env:
