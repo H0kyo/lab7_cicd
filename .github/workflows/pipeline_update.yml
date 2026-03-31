@@ -37,7 +37,7 @@ jobs:
       - run: databricks bundle deploy
         working-directory: .
         env:
-          DATABRICKS_TOKEN: ${{ secrets.SP_TOKEN }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
           DATABRICKS_BUNDLE_ENV: dev
 
   # Validate, deploy, and then run the bundle.
@@ -58,8 +58,8 @@ jobs:
 
       # Run the Databricks workflow named "sample_job" as defined in the
       # bundle that was just deployed.
-      - run: databricks bundle run sample_job --refresh-all
+      - run: databricks bundle run lab7_cicd_etl --refresh-all
         working-directory: .
         env:
-          DATABRICKS_TOKEN: ${{ secrets.SP_TOKEN }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
           DATABRICKS_BUNDLE_ENV: dev
