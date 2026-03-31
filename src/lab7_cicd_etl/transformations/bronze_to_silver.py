@@ -10,7 +10,7 @@ dlt.create_streaming_table(
 )
 
 dlt.apply_changes(
-    target = "transport_stream_silver",
+    target = "hrynchuk_test.silver.transport_stream_silver",
     source = "hrynchuk_test.bronze.transport_stream_bronze",
     keys = ["key"],
     sequence_by = col("ingestion_timestamp"),
