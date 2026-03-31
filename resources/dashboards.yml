@@ -6,7 +6,7 @@ resources:
       warehouse_id: ${var.sql_warehouse_id}
       permissions:
         - group_name: users
-          level: CAN_VIEW
+          level: CAN_READ
         - user_name: squ14sss@softserve.academy
           level: CAN_MANAGE
         - user_name: lbiel@softserve.academy
