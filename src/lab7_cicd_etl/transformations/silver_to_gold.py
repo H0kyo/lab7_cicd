@@ -1,5 +1,5 @@
 import dlt
-from spark.sql.functions import *
+from pyspark.sql.functions import *
 
 @dlt.table(
     name="hrynchuk_test.gold.dim_vehicles",

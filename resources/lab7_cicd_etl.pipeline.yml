@@ -6,8 +6,16 @@ resources:
       name: lab7_cicd_etl
       catalog: ${var.catalog}
       schema: ${var.schema}
-      serverless: true
       root_path: "../src/lab7_cicd_etl"
+
+      clusters:
+        - label: default
+          num_workers: 0
+          node_type_id: "Standard_F4"
+          spark_conf:
+            "spark.databricks.cluster.profile": "singleNode"
+            "spark.master": "local[*]"
+            "spark.databricks.delta.preview.enabled": "true"
 
       libraries:
         - glob:
