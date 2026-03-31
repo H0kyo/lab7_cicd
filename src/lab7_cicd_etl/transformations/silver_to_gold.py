@@ -1,41 +1,32 @@
 import dlt
 from pyspark.sql.functions import *
 
-@dlt.table(
-    name="hrynchuk_test.gold.dim_vehicles",
-    comment="Dimension table for vehicles with history"
+# 1. Initialize the Target Dimension Table
+dlt.create_streaming_table(
+    name="hrynchuk_test.gold.dim_vehicles_gold",
+    comment="SCD Type 2 Dimension table for Vehicles",
+    table_properties={
+        "quality": "gold"
+    }
 )
-def dim_vehicles():
-    return (
-        dlt.read("hrynchuk_test.silver.transport_stream_silver")
-        .select("vehicleId", "lineName", "destinationName", "__start_at", "__end_at", "__is_current")
-    )
 
-@dlt.table(
-    name="hrynchuk_test.gold.fact_transport_events",
-    comment="Fact table containing all arrival events"
-)
-def fact_transport_events():
-    return (
-        dlt.read("hrynchuk_test.silver.transport_stream_silver")
-        .select(
-            "vehicleId",
-            "expectedArrival",
-            "timeToStation",
-            col("timestamp").alias("event_time")
-        )
-    )
+# 2. Apply SCD Type 2 Logic
+dlt.apply_changes(
+    target="hrynchuk_test.gold.dim_vehicles_gold",
+    source="hrynchuk_test.silver.transport_silver",
+    keys=["vehicleId"],
+    sequence_by=col("ingestion_timestamp"),
 
-@dlt.table(
-    name="hrynchuk_test.gold.agg_line_stats",
-    comment="Summary of average arrival times per line"
+    stored_as_scd_type="2",
+
+    track_history_column_list=["lineName", "destinationName"]
 )
-def agg_line_stats():
+
+
+# 3. Create the Fact Table
+@dlt.table(name="hrynchuk_test.gold.fact_arrivals_gold")
+def fact_arrivals_gold():
     return (
-        dlt.read("hrynchuk_test.gold.fact_transport_events")
-        .groupBy("lineName")
-        .agg(
-            avg("timeToStation").alias("avg_time_to_station"),
-            count("vehicleId").alias("total_arrivals_tracked")
-        )
+        dlt.read("hrynchuk_test.silver.transport_silver")
+        .select("vehicleId", "timeToStation", "expectedArrival", "timestamp")
     )

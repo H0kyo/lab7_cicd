@@ -1,21 +1,21 @@
-from pyspark.sql.functions import *
 import dlt
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
 
-dlt.create_streaming_table(
-    name="hrynchuk_test.silver.transport_stream_silver",
-    comment="Silver table with SCD Type 2 history",
-    table_properties={
-        "quality": "silver"
-    }
-)
+tfl_schema = StructType([
+    StructField("vehicleId", StringType(), True),
+    StructField("lineName", StringType(), True),
+    StructField("destinationName", StringType(), True),
+    StructField("timeToStation", IntegerType(), True),
+    StructField("expectedArrival", StringType(), True),
+    StructField("ingestion_timestamp", StringType(), True)
+])
 
-dlt.apply_changes(
-    target = "hrynchuk_test.silver.transport_stream_silver",
-    source = "hrynchuk_test.bronze.transport_stream_bronze",
-    keys = ["key"],
-    sequence_by = col("ingestion_timestamp"),
-    ignore_null_updates = False,
-    apply_as_deletes = expr("operation = 'DELETE'"),
-    stored_as_scd_type = "2",
-    track_history_column_list = ["lineName", "expectedArrival", "destinationName"]
-)
+@dlt.table(name="hrynchuk_test.silver.transport_silver")
+def transport_silver():
+    return (
+        dlt.read_stream("hrynchuk_test.bronze.transport_stream_bronze")
+        .withColumn("body_str", col("value").cast("string"))
+        .withColumn("data", from_json(col("body_str"), tfl_schema))
+        .select("data.*", "timestamp")
+    )
