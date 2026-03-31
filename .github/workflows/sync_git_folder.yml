@@ -6,7 +6,7 @@ on:
   push:
     branches:
       # Set your base branch name here
-      - git-folder-cicd-example
+      - main
 
 permissions:
   # These permissions are required for workload identity federation.
