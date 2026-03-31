@@ -14,6 +14,9 @@ variables:
     description: The catalog to use
   schema:
     description: The schema to use
+  sql_warehouse_id:
+    description: ID of the SQL Warehouse for dashboards
+    default: "bfab7bf7a47d6172"
 
 targets:
   dev:
@@ -38,5 +41,9 @@ targets:
       catalog: hrynchuk_test
       schema: prod
     permissions:
+      - group_name: users
+        level: CAN_VIEW
       - user_name: squ14sss@softserve.academy
+        level: CAN_MANAGE
+      - user_name: lbiel@softserve.academy
         level: CAN_MANAGE

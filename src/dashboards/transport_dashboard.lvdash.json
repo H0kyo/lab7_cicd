@@ -1,0 +1,237 @@
+{
+  "datasets": [
+    {
+      "name": "89933714",
+      "displayName": "dim_vehicles_gold",
+      "queryLines": [
+        "SELECT * FROM hrynchuk_test.gold.dim_vehicles_gold"
+      ]
+    },
+    {
+      "name": "01d0477e",
+      "displayName": "fact_arrivals_gold",
+      "queryLines": [
+        "SELECT * FROM hrynchuk_test.gold.fact_arrivals_gold"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "546d2935",
+      "displayName": "Main",
+      "layout": [
+        {
+          "widget": {
+            "name": "machines",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "01d0477e",
+                  "fields": [
+                    {
+                      "name": "count(vehicleId)",
+                      "expression": "COUNT(`vehicleId`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Machines"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(vehicleId)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 4,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "469d1583",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "01d0477e",
+                  "fields": [
+                    {
+                      "name": "vehicleId",
+                      "expression": "`vehicleId`"
+                    },
+                    {
+                      "name": "expectedArrival",
+                      "expression": "`expectedArrival`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "vehicleId",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "expectedArrival",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "ae841c2a",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "89933714",
+                  "fields": [
+                    {
+                      "name": "destinationName",
+                      "expression": "`destinationName`"
+                    },
+                    {
+                      "name": "count(vehicleId)",
+                      "expression": "COUNT(`vehicleId`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Top Destinations by Vehicle Arrivals",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "destinationName",
+                  "displayName": "destinationName",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "count(vehicleId)",
+                  "displayName": "Number of Arrivals",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 6,
+            "width": 8,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "edcf0564",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "day",
+            "queries": [
+              {
+                "name": "dashboards/01f12c160948191fb71c48741b05d452/datasets/01f12c165d6012af8bdfc363eac0c925_hourly(timestamp)",
+                "query": {
+                  "datasetName": "01d0477e",
+                  "fields": [
+                    {
+                      "name": "hourly(timestamp)",
+                      "expression": "DATE_TRUNC(\"HOUR\", `timestamp`)"
+                    },
+                    {
+                      "name": "hourly(timestamp)_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Day"
+              },
+              "disallowAll": false,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "hourly(timestamp)",
+                    "displayName": "HOURLY(timestamp)",
+                    "queryName": "dashboards/01f12c160948191fb71c48741b05d452/datasets/01f12c165d6012af8bdfc363eac0c925_hourly(timestamp)"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}

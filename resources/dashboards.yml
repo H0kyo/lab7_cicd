@@ -1,0 +1,13 @@
+resources:
+  dashboards:
+    transport_analytics:
+      display_name: "Transport Real-time Analytics"
+      file_path: ../src/dashboards/transport_dashboard.lvdash.json
+      warehouse_id: ${var.sql_warehouse_id}
+      permissions:
+        - group_name: users
+          level: CAN_VIEW
+        - user_name: squ14sss@softserve.academy
+          level: CAN_MANAGE
+        - user_name: lbiel@softserve.academy
+          level: CAN_MANAGE

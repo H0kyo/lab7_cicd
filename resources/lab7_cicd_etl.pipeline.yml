@@ -15,7 +15,8 @@ resources:
           spark_conf:
             "spark.databricks.cluster.profile": "singleNode"
             "spark.master": "local[*]"
-            "spark.databricks.delta.preview.enabled": "true"
+          custom_tags:
+            ResourceClass: SingleNode
 
       libraries:
         - glob:
