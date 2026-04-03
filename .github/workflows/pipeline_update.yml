@@ -41,20 +41,35 @@ jobs:
   pipeline_update:
     name: 'Run pipeline update'
     runs-on: ubuntu-latest
-
-    # Run the "deploy" job first.
     needs:
       - deploy
 
     steps:
-      # Check out this repo, so that this workflow can access it.
       - uses: actions/checkout@v3
-
-      # Use the downloaded Databricks CLI.
       - uses: databricks/setup-cli@main
 
+      # 1. Запуск DLT пайплайну
       - run: databricks bundle run lab7_cicd_etl --refresh-all
         working-directory: .
         env:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
           DATABRICKS_BUNDLE_ENV: dev
+
+      # 2. Застосування RLS/CLS через SQL Statement API
+      - name: Apply RLS and CLS via SQL API
+        run: |
+          # Читаємо SQL файл та замінюємо переноси рядків на пробіли для JSON
+          SQL_QUERY=$(cat security_policies.sql | tr '\n' ' ' | sed 's/"/\\"/g')
+          
+          curl -X POST "${{ secrets.DATABRICKS_HOST }}/api/2.0/sql/statements/" \
+            -H "Authorization: Bearer ${{ secrets.DATABRICKS_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"statement\": \"$SQL_QUERY\",
+              \"warehouse_id\": \"${{ secrets.SQL_WAREHOUSE_ID }}\"
+            }"
+        env:
+          # Ці змінні мають бути в GitHub Settings -> Secrets & Variables
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          SQL_WAREHOUSE_ID: ${{ secrets.SQL_WAREHOUSE_ID }}
